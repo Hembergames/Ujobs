@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}- Login{% endblock %}
+
+{% block content %}
+
+<div class="center_login">
+    <h1>Crie sua conta:</h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <a>Usuário:</a>
+        {{ form.userLogin(size=35, class="form-control") }}<br>
+        <a>Senha:</a>
+        {{ form.passwordLogin(size=35, class="form-control") }}<br>
+        <a>Repetir senha:</a>
+        {{ form.passwordAgainLogin(size=35, class="form-control") }}<br>
+        {{ form.register(class="btn btn-warning") }}
+    </form>
+
+    <h1>Ou se já possuir uma conta:</h1>
+    <button onclick="window.location.href='/login';" class="btn btn-warning">Entrar</button>
+
+</div> 
+
+{% endblock %}
