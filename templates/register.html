@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}- Cadastro{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+   <div class="error">
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endwith %}
+
+<div class="login">
+    <h1>Crie sua conta:</h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <a>Usuário:</a>
+        {{ form.userLogin(size=35, class="form-control") }}<br>
+        <a>Senha:</a>
+        {{ form.passwordLogin(size=35, class="form-control") }}<br>
+        <a>Repetir senha:</a>
+        {{ form.passwordAgainLogin(size=35, class="form-control") }}<br>
+        {{ form.register(class="btn btn-primary w-100 rounded-pill") }}
+    </form>
+
+    <p class="login-link">Já possui uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
+    
+</div> 
+
+{% endblock %}

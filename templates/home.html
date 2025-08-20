@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="center">
+    <img src="{{url_for('static', filename='Ujobs.png')}}" width="300">
+    <h1 class="home-title">Olá, Seja bem-vindo(a) ao Ujobs!</h1>
+</div>
+
+<div class="home1">
+    <div class="home-center">
+        <h1 class="home-text">Cadastre-se agora e</h1>
+        <h1 class="home-text">explore as oportunidades de emprego</h1>
+        <button onclick="window.location.href='/login';" class="btn btn-primary w-100 rounded-pill">Entrar</button>   
+        <p class="home-link">Não possui uma conta? <a href="{{ url_for('register') }}">Cadastra-se agora</a></p>
+    </div>
+    <img class="home-image" src="{{url_for('static', filename='homeimage.jpg')}}" width="600">
+</div>
+
+<div class="home2">
+    <p class="home-text">Nós, da Ujobs, observamos a necessidade de disseminar as oportunidades empregatícias na região do Distrito Federal e entorno e, portanto, facilitar o acesso às tais.</p>
+    <img src="{{url_for('static', filename='Trabalho.jpeg')}}" width="300">
+</div>
+
+<div class="home1">
+    <p>Aqui, você encontra vagas de emprego em diversas áreas de atuação e estabelece uma relação direta com seu empregador. Isso, de modo intuitivo e simples, visto o design amigável disposto na plataforma.</p>
+    <img src="{{url_for('static', filename='Trabalho.jpeg')}}" width="300">
+</div>
+
+
+    
+
+{% endblock %}
