@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="center">
+    <img src="{{url_for('static', filename='Ujobs.png')}}" width="300">
+
+    <div class="home-slogan">
+        <h1 class="home-title">Olá, Seja bem-vindo(a) ao Ujobs!</h1>
+        <h1 class="home-text">Nós, da Ujobs, observamos a necessidade de disseminar as oportunidades empregatícias na região do Distrito Federal e entorno</h1>
+        <h1 class="home-text">e, portanto, facilitar o acesso às tais. Aqui, você encontra vagas de emprego em diversas áreas de atuação e estabelece uma</h1>
+        <h1 class="home-text">relação direta com seu empregador. Isso, de modo intuitivo e simples, visto o design amigável disposto na plataforma</h1>
+    </div>
+</div>
+
+<div class="home1">
+    <div class="home-center">
+        {% if current_user.is_authenticated %}
+            <h1 class="home-text">Atualize seu perfil e o adeque às</h1>
+            <h1 class="home-text">suas experiências profissionais</h1> 
+            <button onclick="window.location.href='/profile';" class="btn btn-outline-secondary rounded-pill w-75">Ver perfil</button>
+        {% else %}
+            <h1 class="home-text">Cadastre-se agora e explore as</h1>
+            <h1 class="home-text">oportunidades de emprego</h1>
+            <button onclick="window.location.href='/login';" class="btn btn-primary w-75 rounded-pill">Entrar na conta</button>   
+            <p class="home-link">Não possui uma conta? <a href="{{ url_for('register') }}">Cadastra-se agora</a></p>
+        {% endif %}
+    </div>
+    <img class="home-image" src="{{url_for('static', filename='homeimage.jpg')}}" width="600">
+</div>
+
+<div class="home2">
+    <div class="home-center">
+        <h1 class="home-text">Procure por vagas de emprego que sejam compatíveis com suas expectativas</h1>
+        <h1 class="home-text">profissionais através do explorar, ou mesmo crie conexões</h1>
+        <h1 class="home-text">com outros proletariados, como uma comunidade</h1>
+        <button onclick="window.location.href='/explore';" class="btn btn-outline-secondary rounded-pill w-50">Explorar usuários</button>  
+    </div>
+    <img class="home-image" src="{{url_for('static', filename='Explore.png')}}" width="500">
+</div>
+
+<div class="home1">
+    <div class="home-center">
+        <h1 class="home-text">Criação de conta fácil e intuitiva, além de adequar seu perfil às suas informações</h1>
+        <h1 class="home-text">pessoais e experiências profissionais de modo a ser possível estabelecer conexão</h1>
+        <h1 class="home-text">entre você e os empregadores/empresas vinculados em nossa plataforma</h1>
+    </div>
+    <img class="home-image" src="{{url_for('static', filename='Profile.png')}}" width="600">
+</div>
+
+
+    
+
+{% endblock %}

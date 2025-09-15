@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}- Login{% endblock %}
+
+{% block content %}
+
+<div class="error">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<div class="login">
+    <h1>Entre na sua conta:</h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <a>Usuário:</a>
+        {{ form.userLogin(size=35, class="form-control") }}<br>
+        <a>Senha:</a>
+        {{ form.passwordLogin(size=35, class="form-control") }}<br>
+        {{ form.login(class="btn btn-primary w-100 rounded-pill") }}
+    </form>
+
+    <p class="login-link">Não possui uma conta? <a href="{{ url_for('register') }}">Cadastra-se agora</a></p>
+</div> 
+
+{% endblock %}
+

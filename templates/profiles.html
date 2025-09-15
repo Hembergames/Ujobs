@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}- {{ user.name }}{% endblock %}
+
+{% block content %}
+
+<div class="error">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<div class="profile">
+      <div class="profile-card">
+
+            <div class="profile-items">
+                  {% if user.photo %}
+                        <img src="{{ url_for('static', filename=user.photo) }}" class="profile-photo" />
+                  {% else %}
+                        <img src="{{ url_for('static', filename='default.png') }}" alt="Sem foto" class="profile-photo" >
+                  {% endif %}
+
+                  {% if user.name %}
+                  <span class="profile-name">{{ user.name }}</span>
+                   {% endif %}
+            </div>
+            
+            <div class="profile-items">
+                  <p class="profile-info"><strong>Data de Nascimento:</strong> 
+                        {% if user.date %}
+                              {{ user.date.strftime('%d/%m/%Y') }}
+                        {% endif %}
+                  </p>
+            </div>
+
+            <div class="profile-items">
+                  <p class="profile-info"><strong>Telefone:</strong> 
+                  {% if user.number %}
+                        {{ user.number }}
+                  {% endif %}
+                  </p>
+            </div>
+
+            <div class="profile-items"> 
+                  <p class="profile-info"><strong>E-mail:</strong> 
+                  {% if user.email %}
+                        {{ user.email }}
+                  {% endif %}
+                  </p>
+            </div>
+
+            <div class="profile-items">
+                  <p class="profile-info"><strong>Biografia:</strong>
+                  {% if user.bio %}
+                        {{ user.bio }}
+                  {% endif %}
+                  </p>
+            </div>
+      </div>
+</div>
+
+{% endblock %}

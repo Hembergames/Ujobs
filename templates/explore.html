@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}- Explorar{% endblock %}
+
+{% block content %}
+
+<div class="users">
+    <form method="POST" class="search-box">
+        {{ form.hidden_tag() }}
+        <i class="fa fa-search"></i>
+        {{ form.search(placeholder="Pesquisar", class="search-input") }}
+    </form>
+
+    {% if form.search.data %}
+        <h2 class="users-title">Resultados da pesquisa</h2>
+    {% else %}
+        <h2 class="users-title">Usuários em destaque</h2>
+    {% endif %}
+
+    {% if users %}
+        {% for user in users %}
+            <a href="{{ url_for('profiles', username=user.user) }}">
+                <div class="users-search">
+                    {% if user.photo %}
+                        <img src="{{ url_for('static', filename=user.photo) }}" class="profile-photo">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='default.png') }}" class="profile-photo">
+                    {% endif %}
+
+                    <span class="profile-name">{{ user.name }}</span>
+                    <p><strong>Bio:</strong> {{ user.bio }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <p>Nenhum usuário encontrado.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
