@@ -35,6 +35,12 @@
             width="65"></a>
 
             {% if current_user.is_authenticated %}
+                <a href="/chats"><img 
+                src="{{url_for('static', filename='agusopot.png')}}" 
+                onmouseover="this.src='/static/vote-card.png'"
+                onmouseout="this.src='/static/agusopot.png'"
+                width="65"></a>
+                
                 <a href="/profile"><img 
                 src="{{url_for('static', filename='Profile1.png')}}" 
                 onmouseover="this.src='/static/Profile2.png'"

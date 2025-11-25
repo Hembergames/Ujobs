@@ -5,5 +5,5 @@ Flask-WTF
 WTForms
 email_validator
 Werkzeug
-datetime
+pytz
 gunicorn

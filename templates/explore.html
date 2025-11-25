@@ -17,8 +17,10 @@
         <h2 class="users-title">Usuários em destaque</h2>
     {% endif %}
 
-    {% if users %}
-        {% for user in users %}
+    {% set filtered_users = users | selectattr("name") | selectattr("date") | selectattr("number") | selectattr("email") | list %}
+
+    {% if filtered_users %}
+        {% for user in filtered_users %}
             <a href="{{ url_for('profiles', username=user.user) }}">
                 <div class="users-search">
                     {% if user.photo %}

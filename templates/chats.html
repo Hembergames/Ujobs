@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}- Chats{% endblock %}
+
+{% block content %}
+<div class="center">
+  <div class="conversations">
+    <h2 class="conversations-title">Conversas</h2>
+
+    {% if conversations %}
+      {% for c in conversations %}
+        <a href="{{ url_for('chat', with_user_id=c.partner_id) }}" class="conversation-link">
+          <div class="conversation-item">
+            <div class="conversation-left">
+
+              {% if c.partner.photo %}
+                <img src="{{ url_for('static', filename=c.partner.photo) }}" alt="foto" class="conv-photo">
+              {% else %}
+                <img src="{{ url_for('static', filename='default.png') }}" alt="foto" class="conv-photo">
+              {% endif %}
+            </div>
+
+            <div class="conversation-main">
+              <div class="conversation-top">
+                <span class="conv-name">
+                  {% if c.partner.name %}
+                    {% set parts = c.partner.name.split() %}
+                    {% if parts|length >= 2 %}
+                      {{ parts[0] }} {{ parts[-1] }}
+                    {% else %}
+                      {{ c.partner.name }}
+                    {% endif %}
+                  {% else %}
+                    {{ c.partner.user }}
+                  {% endif %}
+                </span>
+                <span class="conv-time">{{ c.timestamp.strftime('%d/%m/%Y %H:%M') }}</span>
+              </div>
+
+              <div class="conversation-last">
+                {{ c.message[:120] ~ ('...' if c.message|length > 120 else '') }}
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    {% else %}
+      <p>Nenhuma conversa ainda. Inicie um chat com um usuário clicando em "Chat" no perfil dele.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -7,13 +7,18 @@
 <div class="chat-box">
 
     <h2 class="chat-title">
-        Conversa com {{ other_user.name }}
+        Conversa com {{ other.name }}
     </h2>
 
     <div class="messages-area">
         {% for msg in messages %}
-            <div class="message {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
-                <p>{{ msg.content }}</p>
+            <div class="chat-message {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                <div class="message-content">
+                    {{ msg.content }}
+                </div>
+                <div class="message-time">
+                    {{ msg.timestamp.strftime('%H:%M') }}
+                </div>
             </div>
         {% endfor %}
     </div>

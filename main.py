@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, current_app
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
-from datetime import date
-from models import Message
-import os
-
+from datetime import datetime, date
+from models import Message, User
+import pytz
 from db import db
-from models import User
+import os
 from forms import LoginForm, RegisterForm, ProfileForm, SearchForm
 
 
@@ -148,35 +147,64 @@ def profiles(username):
         idade = hoje.year - user.date.year - ((hoje.month, hoje.day) < (user.date.month, user.date.day))
 
     return render_template('profiles.html', user=user, idade=idade)
- 
+
+
 @app.route("/chat/<int:with_user_id>", methods=["GET", "POST"])
 @login_required
 def chat(with_user_id):
-    other_user = User.query.get_or_404(with_user_id)
+    other = User.query.get_or_404(with_user_id)
 
-    # Enviar mensagem
     if request.method == "POST":
-        content = request.form.get("message")
-        if content.strip():
+        text = request.form.get("message")
+
+        if text.strip():
             msg = Message(
                 sender_id=current_user.id,
                 receiver_id=with_user_id,
-                content=content
+                content=text,
+                timestamp=datetime.now(pytz.timezone("America/Sao_Paulo"))
             )
             db.session.add(msg)
             db.session.commit()
-            return redirect(url_for('chat', with_user_id=with_user_id))
 
-    # Buscar histórico
+        return redirect(url_for("chat", with_user_id=with_user_id))
+
     messages = Message.query.filter(
-        ((Message.sender_id == current_user.id) & (Message.receiver_id == with_user_id))
-        |
+        ((Message.sender_id == current_user.id) & (Message.receiver_id == with_user_id)) |
         ((Message.sender_id == with_user_id) & (Message.receiver_id == current_user.id))
     ).order_by(Message.timestamp.asc()).all()
 
-    return render_template("chat.html", 
-                           other_user=other_user,
-                           messages=messages)
+    return render_template("chat.html", other=other, messages=messages)
+
+
+@app.route('/chats')
+@login_required
+def conversations():
+
+    msgs = Message.query.filter(
+        (Message.sender_id == current_user.id) | (Message.receiver_id == current_user.id)
+    ).order_by(Message.timestamp.desc()).all()
+
+    conv_map = {}
+    for m in msgs:
+
+        if m.sender_id == current_user.id:
+            partner_id = m.receiver_id
+        else:
+            partner_id = m.sender_id
+
+        if partner_id not in conv_map:
+            conv_map[partner_id] = {
+                'message': m.content,
+                'timestamp': m.timestamp,
+                'partner_id': partner_id,
+                'partner': m.sender if m.sender_id != current_user.id else m.receiver
+            }
+
+    conversations = sorted(conv_map.values(), key=lambda x: x['timestamp'], reverse=True)
+
+    return render_template('chats.html', conversations=conversations)
+
 
 if __name__ == '__main__':
     with app.app_context():
