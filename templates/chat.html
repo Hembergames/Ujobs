@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}- Chat{% endblock %}
+
+{% block content %}
+
+<div class="chat-box">
+
+    <h2 class="chat-title">
+        Conversa com {{ other_user.name }}
+    </h2>
+
+    <div class="messages-area">
+        {% for msg in messages %}
+            <div class="message {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                <p>{{ msg.content }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form method="POST" class="chat-form">
+        <input type="text" name="message" placeholder="Digite sua mensagem..." class="chat-input" required>
+        <button class="btn btn-primary rounded-pill">Enviar</button>
+    </form>
+
+</div>
+
+{% endblock %}

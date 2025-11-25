@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, current_app
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
+from datetime import date
+from models import Message
 import os
 
 from db import db
@@ -140,8 +142,41 @@ def profiles(username):
     if user == current_user:
         return profile()
 
-    return render_template('profiles.html', user=user)
+    idade = None
+    if user.date:
+        hoje = date.today()
+        idade = hoje.year - user.date.year - ((hoje.month, hoje.day) < (user.date.month, user.date.day))
 
+    return render_template('profiles.html', user=user, idade=idade)
+ 
+@app.route("/chat/<int:with_user_id>", methods=["GET", "POST"])
+@login_required
+def chat(with_user_id):
+    other_user = User.query.get_or_404(with_user_id)
+
+    # Enviar mensagem
+    if request.method == "POST":
+        content = request.form.get("message")
+        if content.strip():
+            msg = Message(
+                sender_id=current_user.id,
+                receiver_id=with_user_id,
+                content=content
+            )
+            db.session.add(msg)
+            db.session.commit()
+            return redirect(url_for('chat', with_user_id=with_user_id))
+
+    # Buscar histórico
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user.id) & (Message.receiver_id == with_user_id))
+        |
+        ((Message.sender_id == with_user_id) & (Message.receiver_id == current_user.id))
+    ).order_by(Message.timestamp.asc()).all()
+
+    return render_template("chat.html", 
+                           other_user=other_user,
+                           messages=messages)
 
 if __name__ == '__main__':
     with app.app_context():

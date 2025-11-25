@@ -4,6 +4,22 @@
 
 {% block content %}
 
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // alerta visual pequeno
+        const toast = document.createElement("div");
+        toast.innerText = "Copiado!";
+        toast.className = "copy-toast";
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 1200);
+    });
+}
+</script>
+
 <div class="error">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -17,19 +33,30 @@
     {% endwith %}
 </div>
 
-<div class="profile">
+<div class="profiles">
       <div class="profile-card">
 
             <div class="profile-items">
                   {% if user.photo %}
-                        <img src="{{ url_for('static', filename=user.photo) }}" class="profile-photo" />
+                        <img src="{{ url_for('static', filename=user.photo) }}" class="profiles-photo" />
                   {% else %}
-                        <img src="{{ url_for('static', filename='default.png') }}" alt="Sem foto" class="profile-photo" >
+                        <img src="{{ url_for('static', filename='default.png') }}" alt="Sem foto" class="profiles-photo" >
                   {% endif %}
 
                   {% if user.name %}
-                  <span class="profile-name">{{ user.name }}</span>
-                   {% endif %}
+                        <span class="profile-name">
+                              {% set parts = user.name.split() %}
+                              {% if parts|length >= 2 %}
+                                    {{ parts[0] }} {{ parts[-1] }}
+                              {% else %}
+                                    {{ user.name }}
+                              {% endif %}
+
+                              {% if idade %}
+                                    ({{ idade }} anos)
+                              {% endif %}
+                        </span>
+                  {% endif %}
             </div>
             
             <div class="profile-items">
@@ -41,18 +68,40 @@
             </div>
 
             <div class="profile-items">
-                  <p class="profile-info"><strong>Telefone:</strong> 
-                  {% if user.number %}
-                        {{ user.number }}
-                  {% endif %}
-                  </p>
+                  <div class="profile-items" style="display: flex; justify-content: space-between; align-items: center;">
+      
+                        <p class="profile-info" style="margin: 0;">
+                              <strong>Telefone:</strong>
+                              {% if user.number %}
+                                    <span class="copy-field" onclick="copyToClipboard('{{ user.number }}')">
+                                          {{ user.number }}
+                                    </span>
+
+                                    <i class="fa fa-copy copy-icon" onclick="copyToClipboard('{{ user.number }}')" title="Copiar"></i>
+
+                                    <a href="https://wa.me/{{ user.number | replace('(', '') | replace(')', '') | replace('-', '') | replace(' ', '') }}"
+                                          target="_blank" class="whatsapp-btn">
+                                          <i class="fa-brands fa-whatsapp"></i>
+                                    </a>
+                              {% endif %}
+                        </p>
+
+                        <a href="{{ url_for('chat', with_user_id=user.id) }}" 
+                              class="btn btn-primary rounded-pill">
+                              Chat
+                        </a>
+                  </div>
             </div>
 
             <div class="profile-items"> 
-                  <p class="profile-info"><strong>E-mail:</strong> 
-                  {% if user.email %}
-                        {{ user.email }}
-                  {% endif %}
+                  <p class="profile-info"><strong>E-mail:</strong>
+                        {% if user.email %}
+                              <span class="copy-field" onclick="copyToClipboard('{{ user.email }}')">
+                                    {{ user.email }}
+                              </span>
+
+                              <i class="fa fa-copy copy-icon" onclick="copyToClipboard('{{ user.email }}')" title="Copiar"></i>
+                        {% endif %}
                   </p>
             </div>
 

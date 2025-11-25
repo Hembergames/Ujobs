@@ -14,3 +14,14 @@ class User(UserMixin, db.Model):
     number = db.Column(db.String(15), nullable=True)
     bio = db.Column(db.String(1000), nullable=True)
     photo = db.Column(db.String(120))
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+    
+    id = db.Column(db.Integer, primary_key=True)
+
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.now())
