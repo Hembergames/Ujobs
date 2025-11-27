@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}- {{ user.name if user.account_type == 'person' else user.company_name }}{% endblock %}
+{% block title %}- {{ user.name if user.__class__.__name__ == 'User' else user.company_name }}{% endblock %}
 
 {% block content %}
 
@@ -32,7 +32,7 @@ function copyToClipboard(text) {
 <div class="profile border-0">
     <div class="profile-card border-0">
 
-        {% if user.account_type == 'company' %}
+        {% if user.__class__.__name__ == 'Company' %}
             <!-- PERFIL EMPRESA -->
             <div class="profile-items">
                 {% if user.logo %}
@@ -45,7 +45,6 @@ function copyToClipboard(text) {
                 {% endif %}
             </div>
             
-
             {% if user.number %}
             <div class="profile-items">
                 <strong>Telefone:</strong>
@@ -128,15 +127,13 @@ function copyToClipboard(text) {
                         <p class="profile-info"><strong>Biografia: </strong>{{ user.bio }}</p>                  
                   </div>
             {% endif %}
-            
-
         {% endif %}
 
         <div class="profile-items">
-    <a href="{{ url_for('chat', with_user_id=user.id) }}" class="btn btn-primary w-100 mt-3">
-        <i class="fa fa-envelope"></i> Uchat
-    </a>
-</div>
+            <a href="{{ url_for('chat', with_user_id=user.id) }}" class="btn btn-primary w-100 mt-3">
+                <i class="fa fa-envelope"></i> Uchat
+            </a>
+        </div>
 
     </div>
 </div>
