@@ -49,7 +49,6 @@ class Company(UserMixin, db.Model):
         return f"company-{self.id}"
 
 
-
 # ==========================================================
 #                      MESSAGES
 # ==========================================================
@@ -72,3 +71,22 @@ class Message(db.Model):
         db.DateTime,
         default=lambda: datetime.now(pytz.timezone("America/Sao_Paulo"))
     )
+    
+    # Propriedades para acessar o remetente e destinatário
+    @property
+    def sender(self):
+        if self.sender_type == "user":
+            return User.query.get(self.sender_id)
+        else:
+            return Company.query.get(self.sender_id)
+    
+    @property
+    def receiver(self):
+        if self.receiver_type == "user":
+            return User.query.get(self.receiver_id)
+        else:
+            return Company.query.get(self.receiver_id)
+        
+    def is_sent_by_current_user(self, current_user):
+        current_type = "user" if current_user.__class__.__name__ == "User" else "company"
+        return self.sender_id == current_user.id and self.sender_type == current_type

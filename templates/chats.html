@@ -13,25 +13,45 @@
           <div class="conversation-item">
             <div class="conversation-left">
 
-              {% if c.partner.photo %}
-                <img src="{{ url_for('static', filename=c.partner.photo) }}" alt="foto" class="conv-photo">
+              {% if c.partner.account_type == 'person' or c.partner.__class__.__name__ == 'User' %}
+                <!-- Foto do usuário pessoa física -->
+                {% if c.partner.photo %}
+                  <img src="{{ url_for('static', filename=c.partner.photo) }}" alt="foto" class="conv-photo">
+                {% else %}
+                  <img src="{{ url_for('static', filename='default.png') }}" alt="foto" class="conv-photo">
+                {% endif %}
               {% else %}
-                <img src="{{ url_for('static', filename='default.png') }}" alt="foto" class="conv-photo">
+                <!-- Logo da empresa -->
+                {% if c.partner.logo %}
+                  <img src="{{ url_for('static', filename=c.partner.logo) }}" alt="logo" class="conv-photo">
+                {% else %}
+                  <img src="{{ url_for('static', filename='default.png') }}" alt="logo" class="conv-photo">
+                {% endif %}
               {% endif %}
             </div>
 
             <div class="conversation-main">
               <div class="conversation-top">
                 <span class="conv-name">
-                  {% if c.partner.name %}
-                    {% set parts = c.partner.name.split() %}
-                    {% if parts|length >= 2 %}
-                      {{ parts[0] }} {{ parts[-1] }}
+                  {% if c.partner.account_type == 'person' or c.partner.__class__.__name__ == 'User' %}
+                    <!-- Nome do usuário pessoa física -->
+                    {% if c.partner.name %}
+                      {% set parts = c.partner.name.split() %}
+                      {% if parts|length >= 2 %}
+                        {{ parts[0] }} {{ parts[-1] }}
+                      {% else %}
+                        {{ c.partner.name }}
+                      {% endif %}
                     {% else %}
-                      {{ c.partner.name }}
+                      {{ c.partner.user }}
                     {% endif %}
                   {% else %}
-                    {{ c.partner.user }}
+                    <!-- Nome da empresa -->
+                    {% if c.partner.company_name %}
+                      {{ c.partner.company_name }}
+                    {% else %}
+                      {{ c.partner.user }}
+                    {% endif %}
                   {% endif %}
                 </span>
                 <span class="conv-time">{{ c.timestamp.strftime('%d/%m/%Y %H:%M') }}</span>

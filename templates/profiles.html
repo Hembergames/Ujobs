@@ -131,11 +131,13 @@ function copyToClipboard(text) {
             
 
         {% endif %}
+
         <div class="profile-items">
-            <a href="{{ url_for('chat', with_user_id=user.id) }}" class="btn btn-primary w-100 mt-3">
-                <i class="fa fa-envelope"></i> Uchat
-            </a>
-        </div>
+    <a href="{{ url_for('chat', with_user_id=user.id) }}" class="btn btn-primary w-100 mt-3">
+        <i class="fa fa-envelope"></i> Uchat
+    </a>
+</div>
+
     </div>
 </div>
 

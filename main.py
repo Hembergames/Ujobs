@@ -259,19 +259,31 @@ def profiles(username):
     return render_template('profiles.html', user=account, idade=idade)
 
 
-
 @app.route("/chat/<int:with_user_id>", methods=["GET", "POST"])
 @login_required
 def chat(with_user_id):
-    other = User.query.get_or_404(with_user_id)
+    # Tenta encontrar como User primeiro
+    other = User.query.get(with_user_id)
+    if not other:
+        # Se não encontrar como User, tenta como Company
+        other = Company.query.get_or_404(with_user_id)
 
     if request.method == "POST":
         text = request.form.get("message")
 
         if text.strip():
+            # Determinar tipos CORRETAMENTE
+            current_type = "user" if isinstance(current_user, User) else "company"
+            other_type = "user" if isinstance(other, User) else "company"
+            
+            print(f"DEBUG: current_type={current_type}, current_id={current_user.id}")
+            print(f"DEBUG: other_type={other_type}, other_id={other.id}")
+            
             msg = Message(
+                sender_type=current_type,
                 sender_id=current_user.id,
-                receiver_id=with_user_id,
+                receiver_type=other_type,
+                receiver_id=other.id,  # Usar other.id, não with_user_id
                 content=text,
                 timestamp=datetime.now(pytz.timezone("America/Sao_Paulo"))
             )
@@ -280,37 +292,57 @@ def chat(with_user_id):
 
         return redirect(url_for("chat", with_user_id=with_user_id))
 
+    # Buscar mensagens CORRETAMENTE - usar other.id em vez de with_user_id
     messages = Message.query.filter(
-        ((Message.sender_id == current_user.id) & (Message.receiver_id == with_user_id)) |
-        ((Message.sender_id == with_user_id) & (Message.receiver_id == current_user.id))
+        ((Message.sender_id == current_user.id) & (Message.receiver_id == other.id)) |
+        ((Message.sender_id == other.id) & (Message.receiver_id == current_user.id))
     ).order_by(Message.timestamp.asc()).all()
 
-    return render_template("chat.html", other=other, messages=messages)
+    # DEBUG: Verificar as mensagens no console
+    print(f"=== DEBUG CHAT ===")
+    print(f"current_user.id: {current_user.id}")
+    print(f"other.id: {other.id}")
+    print(f"with_user_id: {with_user_id}")
+    print(f"Total mensagens: {len(messages)}")
+    for msg in messages:
+        is_sent = msg.sender_id == current_user.id
+        print(f"MSG: sender_id={msg.sender_id}, receiver_id={msg.receiver_id}, is_sent={is_sent}")
+    print(f"==================")
 
+    current_user_type = "user" if isinstance(current_user, User) else "company"
+    
+    return render_template("chat.html", 
+                         other=other, 
+                         messages=messages, 
+                         current_user_type=current_user_type)
 
 @app.route('/chats')
 @login_required
 def conversations():
-
     msgs = Message.query.filter(
         (Message.sender_id == current_user.id) | (Message.receiver_id == current_user.id)
     ).order_by(Message.timestamp.desc()).all()
 
     conv_map = {}
     for m in msgs:
-
         if m.sender_id == current_user.id:
             partner_id = m.receiver_id
         else:
             partner_id = m.sender_id
 
         if partner_id not in conv_map:
-            conv_map[partner_id] = {
-                'message': m.content,
-                'timestamp': m.timestamp,
-                'partner_id': partner_id,
-                'partner': m.sender if m.sender_id != current_user.id else m.receiver
-            }
+            # Buscar o parceiro (tenta User primeiro, depois Company)
+            partner = User.query.get(partner_id)
+            if not partner:
+                partner = Company.query.get(partner_id)
+            
+            if partner:
+                conv_map[partner_id] = {
+                    'message': m.content,
+                    'timestamp': m.timestamp,
+                    'partner_id': partner_id,
+                    'partner': partner
+                }
 
     conversations = sorted(conv_map.values(), key=lambda x: x['timestamp'], reverse=True)
 
