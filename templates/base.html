@@ -16,77 +16,70 @@
 
 <body>
     <header class="bar">
-    <div class="bar-ujobs">
-        <a href="/"><img src="{{url_for('static', filename='Ujobs.png')}}" width="120"></a>
-    </div>
-        
-    <div class="bar-items">
+        <div class="bar-ujobs">
+            <a href="/"><img src="{{ url_for('static', filename='Ujobs.png') }}" width="120"></a>
+        </div>
 
-        <a href="/"><img 
-        src="{{url_for('static', filename='Home1.png')}}" 
-        onmouseover="this.src='/static/Home2.png'"
-        onmouseout="this.src='/static/Home1.png'"
-        width="65"></a>
+        <div class="bar-items">
+            <a href="/"><img id="home-icon" src="{{ url_for('static', filename='Home1.png') }}" width="65"></a>
+            <a href="/explore"><img id="explore-icon" src="{{ url_for('static', filename='Explore1.png') }}" width="65"></a>
 
-        <a href="/explore"><img 
-        src="{{url_for('static', filename='Explore1.png')}}" 
-        onmouseover="this.src='/static/Explore2.png'"
-        onmouseout="this.src='/static/Explore1.png'"
-        width="65"></a>
-
-        {% if current_user.is_authenticated %}
-            <a href="/profile"><img 
-            src="{{url_for('static', filename='Profile1.png')}}" 
-            onmouseover="this.src='/static/Profile2.png'"
-            onmouseout="this.src='/static/Profile1.png'"
-            width="65"></a>
-
-            <a href="{{ url_for('conversations')}}" 
-                class="btn btn-primary rounded-pill d-flex align-items-center gap-2">
+            {% if current_user.is_authenticated %}
+            <a href="/profile"><img id="profile-icon" src="{{ url_for('static', filename='Profile1.png') }}" width="65"></a>
+            <a href="{{ url_for('conversations')}}" class="btn btn-primary rounded-pill d-flex align-items-center gap-2">
                 <i class="fa fa-envelope"></i> Uchat
             </a>
-
-        {% else %}
+            {% else %}
             <div>
                 <button onclick="window.location.href='/register';" class="btn btn-outline-secondary rounded-pill">Cadastra-se</button>
                 <button onclick="window.location.href='/login';" class="btn btn-primary rounded-pill">Entrar</button>
             </div>
-        {% endif %}
+            {% endif %}
 
-        <!-- BOTÃO DE MODO ESCURO FIXO NA DIREITA -->
-        <button id="darkModeToggle" class="dark-btn small-dark-btn">🌙</button>
-
-    </div>
-</header>
+            <button id="darkModeToggle" class="dark-btn small-dark-btn">🌙</button>
+        </div>
+    </header>
 
     {% block content %}
     {% endblock %}
 
 <script>
-    const toggleButton = document.getElementById('darkModeToggle');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const menuIcons = document.querySelectorAll('.bar-items img');
 
-    // Ao carregar a página → aplica o tema salvo
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        document.body.classList.add('dark-mode');
-        toggleButton.textContent = "☀️ Modo claro";
-    } else {
-        toggleButton.textContent = "🌙 Modo escuro";
+    function toggleDarkMode(enable) {
+        if (enable) {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.textContent = "☀️ Modo claro";
+
+            menuIcons.forEach(icon => {
+                icon.style.filter = 'brightness(1) invert(1)';
+            });
+        } else {
+            document.body.classList.remove('dark-mode');
+            darkModeToggle.textContent = "🌙 Modo escuro";
+
+            menuIcons.forEach(icon => {
+                icon.style.filter = 'none';
+            });
+        }
     }
 
-    // Alternar tema ao clicar
-    toggleButton.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
 
-        if (document.body.classList.contains('dark-mode')) {
-            toggleButton.textContent = "☀️ Modo claro";
-            localStorage.setItem('darkMode', 'enabled');
-        } else {
-            toggleButton.textContent = "🌙 Modo escuro";
-            localStorage.setItem('darkMode', 'disabled');
-        }
+    const darkEnabled = localStorage.getItem('darkMode') === 'enabled';
+    toggleDarkMode(darkEnabled);
+
+
+    darkModeToggle.addEventListener('click', () => {
+        const darkEnabledNow = !document.body.classList.contains('dark-mode');
+        toggleDarkMode(darkEnabledNow);
+        localStorage.setItem('darkMode', darkEnabledNow ? 'enabled' : 'disabled');
     });
 </script>
 
-</body>
+<footer class="footer text-center py-3">
+    <p>© 2025 Ujobs — Todos os direitos reservados.</p>
+</footer>
 
+</body>
 </html>

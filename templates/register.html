@@ -5,16 +5,16 @@
 {% block content %}
 
 {% with messages = get_flashed_messages(with_categories=true) %}
-   <div class="error">
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
+<div class="error">
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
 {% endwith %}
 
 <div class="login">
@@ -22,17 +22,95 @@
 
     <form method="POST">
         {{ form.hidden_tag() }}
-        <a>Usuário:</a>
-        {{ form.userLogin(size=35, class="form-control") }}<br>
-        <a>Senha:</a>
-        {{ form.passwordLogin(size=35, class="form-control") }}<br>
-        <a>Repetir senha:</a>
-        {{ form.passwordAgainLogin(size=35, class="form-control") }}<br>
-        {{ form.register(class="btn btn-primary w-100 rounded-pill") }}
+
+        <!-- Tipo de conta -->
+        <div class="mb-3">
+            <label class="form-label">Tipo de cadastro:</label><br>
+
+            <input type="radio" name="accountType" id="pf" value="person" checked>
+            <label for="pf">Pessoa Física</label>
+
+            <input type="radio" name="accountType" id="pj" value="company" class="ms-3">
+            <label for="pj">Empresa</label>
+        </div>
+
+        <!-- CPF (Pessoa Física) -->
+        <div id="pf-fields">
+            <label>CPF:</label>
+            <input type="text" id="cpf" name="cpf" class="form-control" maxlength="14" required><br>
+        </div>
+
+        <!-- CNPJ (Empresa) -->
+        <div id="pj-fields" style="display:none;">
+            <label>CNPJ:</label>
+            <input type="text" id="cnpj" name="cnpj" class="form-control" maxlength="18"><br>
+        </div>
+
+        <label>Usuário:</label>
+        {{ form.username(size= "35", class="form-control") }}<br>
+
+        <label>Senha:</label>
+        {{ form.password(size= "35", class="form-control") }}<br>
+
+        <label>Repetir senha:</label>
+        {{ form.password_again(size= "35", class="form-control") }}<br>
+
+        {{ form.submit(class="btn btn-primary w-100 rounded-pill mt-2") }}
     </form>
 
     <p class="login-link">Já possui uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
-    
-</div> 
+</div>
+
+<script src="https://unpkg.com/imask"></script>
+<script>
+const pfRadio = document.getElementById('pf');
+const pjRadio = document.getElementById('pj');
+const pfFields = document.getElementById('pf-fields');
+const pjFields = document.getElementById('pj-fields');
+const cpfInput = document.getElementById('cpf');
+const cnpjInput = document.getElementById('cnpj');
+const phoneInput = document.querySelector('input[name="number"]');
+
+pfRadio.addEventListener('change', toggleFields);
+pjRadio.addEventListener('change', toggleFields);
+
+function toggleFields() {
+    if (pfRadio.checked) {
+        pfFields.style.display = 'block';
+        pjFields.style.display = 'none';
+
+        cpfInput.required = true;
+        cnpjInput.required = false;
+        cnpjInput.value = "";
+    } else {
+        pfFields.style.display = 'none';
+        pjFields.style.display = 'block';
+
+        cpfInput.required = false;
+        cnpjInput.required = true;
+        cpfInput.value = "";
+    }
+}
+
+// Máscara CPF
+IMask(cpfInput, {
+    mask: '000.000.000-00'
+});
+
+// Máscara CNPJ
+IMask(cnpjInput, {
+    mask: '00.000.000/0000-00'
+});
+
+// Máscara para telefone no registro
+
+if (phoneInput) {
+    IMask(phoneInput, {
+        mask: '(00) 00000-0000'
+    });
+}
+</script>
+
+
 
 {% endblock %}

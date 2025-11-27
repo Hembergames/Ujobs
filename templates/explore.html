@@ -8,7 +8,9 @@
     <form method="POST" class="search-box">
         {{ form.hidden_tag() }}
         <i class="fa fa-search"></i>
-        {{ form.search(placeholder="Pesquisar", class="search-input") }}
+        {{ form.search(size="70", placeholder="Pesquisar", class="search-input") }}
+        {{ form.account_type(class="form-select") }}
+        {{ form.submit(class="btn btn-primary") }}
     </form>
 
     {% if form.search.data %}
@@ -17,20 +19,23 @@
         <h2 class="users-title">Usuários em destaque</h2>
     {% endif %}
 
-    {% set filtered_users = users | selectattr("name") | selectattr("date") | selectattr("number") | selectattr("email") | list %}
-
-    {% if filtered_users %}
-        {% for user in filtered_users %}
+    {% if users %}
+        {% for user in users %}
             <a href="{{ url_for('profiles', username=user.user) }}">
-                <div class="users-search">
-                    {% if user.photo %}
-                        <img src="{{ url_for('static', filename=user.photo) }}" class="profile-photo">
+                <div class="users-search d-flex align-items-center gap-3 mb-3 p-2 border rounded">
+                    {% if user.account_type == "person" %}
+                        <img src="{{ url_for('static', filename=user.photo or 'default.png') }}" class="users-photo rounded-circle" style="width:60px;height:60px;object-fit:cover;">
+                        <div>
+                            <span class="profile-name"><strong>{{ user.name }}</strong></span>
+                            <p><strong>Bio:</strong> {{ user.bio }}</p>
+                        </div>
                     {% else %}
-                        <img src="{{ url_for('static', filename='default.png') }}" class="profile-photo">
+                        <img src="{{ url_for('static', filename=user.logo or 'default.png') }}" class="users-photo rounded-circle" style="width:60px;height:60px;object-fit:cover;">
+                        <div>
+                            <span class="profile-name"><strong>{{ user.company_name }}</strong></span>
+                            <p><strong>Setor:</strong> {{ user.business_sector or 'N/A' }}</p>
+                        </div>
                     {% endif %}
-
-                    <span class="profile-name">{{ user.name }}</span>
-                    <p><strong>Bio:</strong> {{ user.bio }}</p>
                 </div>
             </a>
         {% endfor %}
@@ -38,5 +43,6 @@
         <p>Nenhum usuário encontrado.</p>
     {% endif %}
 </div>
+
 
 {% endblock %}

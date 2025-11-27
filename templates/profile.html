@@ -4,132 +4,320 @@
 
 {% block content %}
 
+<!-- MENSAGENS -->
 <div class="error">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
                 <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 </div>
 
-<div class="profile">
-      <div class="profile-card">
+<div class="profile border-0">
+    <div class="profile-card border-0">
 
+        {% if current_user.cnpj %}
+        <!-- PERFIL EMPRESA -->
+        {% if current_user.logo or current_user.company_name %}
             <div class="profile-items">
-                  {% if current_user.photo %}
-                        <img src="{{ url_for('static', filename=current_user.photo) }}" class="profile-photo" />
-                  {% else %}
-                        <img src="{{ url_for('static', filename='default.png') }}" alt="Sem foto" class="profile-photo" >
-                  {% endif %}
-
-                  {% if current_user.name %}
-                  <span class="profile-name">{{current_user.name}}</span>
-                   {% endif %}
+                {% if current_user.logo %}
+                    <img src="{{ url_for('static', filename=current_user.logo) }}" class="profile-photo">
+                {% endif %}
+                {% if current_user.company_name %}
+                    <span class="profile-info">{{ current_user.company_name }}</span>
+                {% endif %}
             </div>
-            
+        {% endif %}
+
+        {% if current_user.number %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Telefone:</strong> {{ current_user.number }}</p>
+        </div>
+        {% endif %}
+
+        {% if current_user.email %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>E-mail:</strong> {{ current_user.email }}</p>
+        </div>
+        {% endif %}
+
+        {% if current_user.website_url %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Website:</strong> <a href="{{ current_user.website_url }}" target="_blank">{{ current_user.website_url }}</a></p>
+        </div>
+        {% endif %}
+
+        {% if current_user.cnpj %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>CNPJ:</strong> {{ current_user.cnpj }}</p>
+        </div>
+        {% endif %}
+
+        {% if current_user.territorial_scope %}
             <div class="profile-items">
-                  <p class="profile-info"><strong>Data de Nascimento:</strong> 
-                        {% if current_user.date %}
-                              {{ current_user.date.strftime('%d/%m/%Y') }}
-                        {% endif %}
+                  <p><strong>Abrangência Territorial:</strong> 
+                        {% if current_user.territorial_scope == 'local' %}Local
+                        {% elif current_user.territorial_scope == 'regional' %}Regional
+                        {% elif current_user.territorial_scope == 'nacional' %}Nacional
+                        {% elif current_user.territorial_scope == 'internacional' %}Internacional
+                        {% else %}{{ current_user.territorial_scope }}{% endif %}
                   </p>
             </div>
+        {% endif %}
 
+        {% if current_user.structure_type %}
             <div class="profile-items">
-                  <p class="profile-info"><strong>Telefone:</strong> 
-                  {% if current_user.number %}
-                        {{current_user.number}}
-                  {% endif %}
+                  <p><strong>Tipo de Estrutura:</strong> 
+                        {% if current_user.structure_type == 'publica' %}Pública
+                        {% elif current_user.structure_type == 'privada' %}Privada
+                        {% elif current_user.structure_type == 'mista' %}Mista
+                        {% else %}{{ current_user.structure_type }}{% endif %}
+                  </p>
             </div>
+        {% endif %}
 
-            <div class="profile-items"> 
-                  <p class="profile-info"><strong>E-mail:</strong> 
-                  {% if current_user.email %}
-                        {{current_user.email}}
-                  {% endif %}
-            </div>
+        {% if current_user.business_sector %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Setor de Atuação:</strong> {{ current_user.business_sector }}</p>
+        </div>
+        {% endif %}
 
+        {% if current_user.job_positions %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Cargos Oferecidos:</strong> {{ current_user.job_positions }}</p>
+        </div>
+        {% endif %}
+
+        {% if current_user.headquarters_address %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Endereço da Sede:</strong> {{ current_user.headquarters_address }}</p>
+        </div>
+        {% endif %}
+
+        {% if current_user.bio %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Biografia/Descrição:</strong> {{ current_user.bio }}</p>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- PERFIL PESSOA FÍSICA -->
+        {% if current_user.photo or current_user.name %}
             <div class="profile-items">
-                  <p class="profile-info"><strong>Biografia:</strong>
-                  {% if current_user.bio %}
-                        {{current_user.bio}}
-                  {% endif %}
+                {% if current_user.photo %}
+                    <img src="{{ url_for('static', filename=current_user.photo) }}" class="profile-photo">
+                {% endif %}
+                {% if current_user.name %}
+                    <span class="profile-name">{{ current_user.name }}</span>
+                {% endif %}
             </div>
+        {% endif %}
 
-      </div>
-      <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editprofile">Editar perfil</button>
-      </div>
+        {% if current_user.date %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Data de Nascimento:</strong> {{ current_user.date.strftime('%d/%m/%Y') }}</p>
+        </div>
+        {% endif %}
 
-      <div class="modal fade" id="editprofile" tabindex="-1">
-            <div class="modal-dialog">
-                  <div class="modal-content">
-                        <div class="modal-header">
-                              <h5 class="modal-title">Editar perfil</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
+        {% if current_user.cpf %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>CPF:</strong> {{ current_user.cpf }}</p>
+        </div>
+        {% endif %}
 
-                        <form method="POST", enctype="multipart/form-data">
-                              <div class="profile-edit">
-                                    {{ form.hidden_tag() }}
-                                    <div class="profile-file">
-                                          </a>Foto:</a><br>
-                                          {{ form.photoProfile() }}<br>
-                                    </div>
-                                    <a>Nome Completo:</a>
-                                    {{ form.nameProfile(class="form-control", placeholder="Pedro Augusto") }}<br>
-                                    <a>Data de nascimento:</a>
-                                    {{ form.dateProfile(class="form-control") }}<br>
-                                    <a>E-mail:</a>
-                                    {{ form.emailProfile(class="form-control", placeholder="exemplo@gmail.com") }}<br>
-                                    <a>Telefone:</a>
-                                    {{ form.numberProfile(class="form-control", placeholder="(00) 00000-0000", id="number") }}<br>
-                                    <a>Biografia:</a>
-                                    {{ form.bioProfile(class="form-control", placeholder="Trabalho com progamação...") }}<br>       
-                              </div>
+        {% if current_user.email %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>E-mail:</strong> {{ current_user.email }}</p>
+        </div>
+        {% endif %}
 
-                              <script src="https://unpkg.com/imask"></script>
-                              <script>
-                                    var telefoneElement = document.getElementById('number');
-                                    var maskOptions = {
-                                    mask: '(00) 00000-0000'
-                                    };
-                                    IMask(telefoneElement, maskOptions);
-                              </script>
+        {% if current_user.number %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Telefone:</strong> {{ current_user.number }}</p>
+        </div>
+        {% endif %}
 
-                              <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    {{ form.save(class="btn btn-primary") }}
-                              </div>
-                        </form>
-                  </div>
-            </div>
-      </div>
+        {% if current_user.bio %}
+        <div class="profile-items">
+            <p class="profile-info"><strong>Biografia:</strong> {{ current_user.bio }}</p>
+        </div>
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+    <!-- BOTÃO EDITAR -->
+    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editprofile">
+        Editar perfil
+    </button>
 </div>
 
+<!-- MODAL DE EDIÇÃO -->
+<div class="modal fade" id="editprofile" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
+            <div class="modal-header">
+                <h5 class="modal-title">Editar perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="modal-body">
+                    {% if current_user.cnpj %}
+                        <!-- CAMPOS EMPRESA -->
+                        <div class="mb-3">
+                            <label class="form-label">Logo:</label>
+                            {{ form.logo(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nome da Empresa:</label>
+                            {{ form.company_name(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Telefone:</label>
+                            {{ form.number(class="form-control", id="company_phone") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">E-mail:</label>
+                            {{ form.email(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Website:</label>
+                            {{ form.website_url(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">CNPJ:</label>
+                            {{ form.cnpj(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Estrutura:</label>
+                            {{ form.structure_type(class="form-select") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Abrangência Territorial:</label>
+                            {{ form.territorial_scope(class="form-select") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Setor de Atuação:</label>
+                            {{ form.business_sector(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Cargos Oferecidos:</label>
+                            {{ form.job_positions(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Endereço da Sede:</label>
+                            {{ form.headquarters_address(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Biografia/Descrição:</label>
+                            {{ form.bio(class="form-control", rows="3") }}
+                        </div>
+
+                    {% else %}
+                        <!-- CAMPOS PESSOA FÍSICA -->
+                        <div class="mb-3">
+                            <label class="form-label">Foto:</label>
+                            {{ form.photo(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nome Completo:</label>
+                            {{ form.name(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Data de Nascimento:</label>
+                            {{ form.birth_date(class="form-control", type="date", min=min_date, max=max_date) }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">CPF:</label>
+                            {{ form.cpf(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">E-mail:</label>
+                            {{ form.email(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Telefone:</label>
+                            {{ form.number(class="form-control", id="person_phone") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Biografia:</label>
+                            {{ form.bio(class="form-control", rows="3") }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <script src="https://unpkg.com/imask"></script>
+                <script>
+                    // Máscara para telefone da empresa
+                    IMask(document.getElementById("company_phone"), { 
+                        mask: '(00) 0000-0000' 
+                    });
+                    
+                    // Máscara para telefone da pessoa física
+                    IMask(document.getElementById("person_phone"), { 
+                        mask: '(00) 00000-0000' 
+                    });
+                </script>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    {{ form.save(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- LOGOUT -->
 <div class="center">
-      <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal">Sair da conta</button>
+    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal">
+        Sair da conta
+    </button>
 
-      <div class="modal fade" id="confirmModal" tabindex="-1">
-            <div class="modal-dialog">
-                  <div class="modal-content">
-                        <div class="modal-header">
-                              <h5 class="modal-title">Realmente deseja sair da conta?</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
-                        <div class="modal-footer">
-                              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                              <a href="{{ url_for('logout') }}" class="btn btn-danger">Sair</a>
-                        </div>
-                  </div>
+                <div class="modal-header">
+                    <h5 class="modal-title">Realmente deseja sair da conta?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger">Sair</a>
+                </div>
+
             </div>
-      </div>
+        </div>
+    </div>
 </div>
- 
+
 {% endblock %}

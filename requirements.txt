@@ -6,4 +6,5 @@ WTForms
 email_validator
 Werkzeug
 pytz
+python-dateutil
 gunicorn
